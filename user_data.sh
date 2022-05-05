@@ -7,11 +7,14 @@ curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.pha
 chmod +x wp-cli.phar
 sudo mv wp-cli.phar /usr/local/bin/wp
 
-
+#install the latest version of jq
+sudo apt-get install jq
 
 #getting the wp username and password for secret manager
-aws secretsmanager get-secret-value \
-    --secret-id WordPress_DB_Credentials 
+username=$(aws secretsmanager get-secret-value --secret-id WordPress_DB_Credentials --query SecretString --output text | jq ".wordpress_username")
+password=$(aws secretsmanager get-secret-value --secret-id WordPress_DB_Credentials --query SecretString --output text | jq ".wordpress_password")
+
+
 
 #Creating the wp_config.php file
 cat <<EOT >> wp_config.php
@@ -40,10 +43,10 @@ cat <<EOT >> wp_config.php
 define( 'DB_NAME', 'database_name_here' );
 
 /** Database username */
-define( 'DB_USER', 'username_here' );
+define( 'DB_USER', $username );
 
 /** Database password */
-define( 'DB_PASSWORD', 'password_here' );
+define( 'DB_PASSWORD', $password );
 
 /** Database hostname */
 define( 'DB_HOST', 'localhost' );
