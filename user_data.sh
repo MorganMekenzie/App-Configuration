@@ -17,7 +17,7 @@ password=$(aws secretsmanager get-secret-value --secret-id WordPress_DB_Credenti
 
 
 #Creating the wp_config.php file
-cat <<EOT >> wp_config.php
+cat <<EOT >> /var/www/challenge-week/wp-config.php
 <?php
 /**
  * The base configuration for WordPress
